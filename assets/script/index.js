@@ -1,9 +1,15 @@
 'use strict';
 
-const quoteDisplayElement = document.getElementById('quoteDisplay');
-const quoteInputElement = document.getElementById('quoteInput');
-const timerElement = document.getElementById('timer');
-const randomWord = ['dinosaur', 'love', 'pineapple', 'calendar', 'robot', 'building', 'population',
+const startGame = document.getElementById('button');
+const stats = document.getElementById('stats');
+const input = document.getElementById('input');
+const textDisplay = document.getElementById('text-display');
+const form = document.getElementById('form');
+const mainContent = document.getElementById('main-content');
+const timeDisplay = document.getElementById('time-display');
+const wpmDisplay = document.getElementById('wpm-display');
+const scoreDisplay = document.getElementById('score-display');
+const randomWords = ['dinosaur', 'love', 'pineapple', 'calendar', 'robot', 'building', 'population',
 'weather', 'bottle', 'history', 'dream', 'character', 'money', 'absolute',
 'discipline', 'machine', 'accurate', 'connection', 'rainbow', 'bicycle',
 'eclipse', 'calculator', 'trouble', 'watermelon', 'developer', 'philosophy',
@@ -18,59 +24,79 @@ const randomWord = ['dinosaur', 'love', 'pineapple', 'calendar', 'robot', 'build
 'famous', 'league', 'memory', 'leather', 'planet', 'software', 'update', 'yellow',
 'keyboard', 'window'];
 
-quoteInputElement.addEventListener('input', () => {
-const arrayQuote = quoteDisplayElement.querySelectorAll('span');
-const arrayValue = quoteInputElement.value.split('');
+const state = {
+    currentWord: '',
+    score: 0,
+    timeElapsed: 0,
+    gameLength: 99,
+}
 
-let correct = true
-arrayQuote.forEach((characterSpan, index) => {
-    const character = arrayValue[index];
-    if (character == null) {
-        characterSpan.classList.remove('correct');
-        characterSpan.classList.remove('incorrect');
-        correct = false;
-    } else if (character === characterSpan.innerText) {
-        characterSpan.classList.add('correct');
-        characterSpan.classList.remove('incorrect');
-    } else {
-        characterSpan.classList.remove('correct');
-        characterSpan.classList.add('incorrect');
-        correct = false;
+function createWordSpan(color, content) {
+    const span = document.createElement('span');
+    const style = 'background-color: ' + color;
+    span.setAttribute('style', style);
+    span.setAttribute('class', 'typed-word');
+
+    span.textContent = content;
+    return span;
+}
+
+form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const userInput = input.value;
+    if (userInput === ''){
+        return;
     }
-})
+    const isCorrect = userInput === state.currentWord;
+    let span;
+    if (isCorrect) {
+        span = createWordSpan('greenyellow', userInput);
+        state.score =+ 1;
+    } else {
+        span = createWordSpan('red', userInput);
+    }
 
-if (correct) renderNewWord();
-})
+    mainContent.appendChild(span);
+    input.value = '';
+    nextWord();
+    renderStats();
+});
+
 
 function getRandomWord() {
-    return fetch(randomWord)
-    .then(response => response.json())
-    .then(data => data.content);
+    return randomWords[Math.floor(Math.random() * randomWords.length)]
 }
 
-async function renderNewQuote() {
-const quote = await getRandomQuote();
-quoteDisplayElement.innerHTML = '';
-quote.split('').forEach(character => {
-    const characterSpan = document.createElement('span');
-    characterSpan.innerText = character;
-    quoteDisplayElement.appendChild(characterSpan);
-})
-quoteInputElement.value = null
-startTimer()
+function nextWord() {
+    const word = getRandomWord();
+    textDisplay.textContent = word;
+    state.currentWord = word;
 }
 
-let startTime
-function startTimer() {
-    timerElement.innerText = 0;
-    startTime = new Date();
-setInterval(() => {
-    timer.innerText = getTimerTime()
+function renderStats() {
+    timeDisplay.textContent = state.gameLength - state.timeElapsed;
+    scoreDisplay.textContent = state.score;
+    wpmDisplay.textContent = (state.score / (state.timeElapsed / 60)).toFixed(2);
+}
+
+function startClock() {
+    setInterval(function(){
+        state.timeElapsed += 1;
+        renderStats();
+        if (timeElapsed === state.gameLength) {
+            alert("Game over, WPM is: " + wpmDisplay.textContent);
+            window.location.reload();
+        }
+    })
+}
+
+startGame.addEventListener('click', function(event) {
+    event.preventDefault;
+    startGame.className= 'hide';
+    stats.className = '';
+    input.className = '';
+    input.focus();
+    nextWord();
+    startClock();
 }, 1000);
-}
 
-function getTimerTime() {
-    return Math.floor((new Date() - startTime) / 1000);
-}
-
-renderNewQuote();
