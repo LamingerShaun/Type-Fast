@@ -98,5 +98,11 @@ startGame.addEventListener('click', function(event) {
     input.focus();
     nextWord();
     startClock();
+    PlaySound = function () {
+        let audio = new Audio('./assets/media/Fine Seeds - Thomas Gresen Royalty Free Music No Copyright Free Background Music Free Download.mp3');
+        audio.loop = false;
+        audio.play(); 
+    }
+    }
 }, 100);
 
