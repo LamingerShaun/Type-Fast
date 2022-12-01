@@ -98,5 +98,5 @@ startGame.addEventListener('click', function(event) {
     input.focus();
     nextWord();
     startClock();
-}, 1000);
+}, 100);
 
