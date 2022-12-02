@@ -28,8 +28,8 @@ const state = {
     currentWord: '',
     score: 0,
     timeElapsed: 0,
-    gameLength: 99,
-}
+    gameLength: 99
+};
 
 function createWordSpan(color, content) {
     const span = document.createElement('span');
@@ -87,7 +87,7 @@ function startClock() {
             alert("Game over, WPM is: " + wpmDisplay.textContent);
             window.location.reload();
         }
-    })
+    });
 }
 
 startGame.addEventListener('click', function(event) {
@@ -103,6 +103,4 @@ startGame.addEventListener('click', function(event) {
         audio.loop = false;
         audio.play(); 
     }
-    }
 }, 100);
-
