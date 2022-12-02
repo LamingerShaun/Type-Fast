@@ -103,4 +103,4 @@ startGame.addEventListener('click', function(event) {
         audio.loop = false;
         audio.play(); 
     }
-}, 100);
+});
